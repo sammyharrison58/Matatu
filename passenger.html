@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matatu Hub | Passenger Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/data.js" defer></script>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">MATATU HUB</div>
+        <div id="user-display"
+            style="font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 1rem;">
+            <span id="user-role-label">PASSENGER: <span id="username"></span></span>
+            <button class="nav-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="slideshow-container" style="position: absolute; inset: 0; z-index: -1;">
+            <div class="slide active" style="background-image: url('assets/hero.png');"></div>
+            <div class="slide" style="background-image: url('assets/super_metro.png');"></div>
+            <div class="slide" style="background-image: url('assets/citi_hoppa.png');"></div>
+            <div class="slideshow-overlay" style="background: linear-gradient(rgba(15, 23, 42, 0.4), var(--bg));"></div>
+        </div>
+        <div id="header-text" style="position: relative; z-index: 2;">
+            <h1 style="font-size: 2.5rem;">Hello, <span id="welcome-name"></span></h1>
+            <p style="color: #94a3b8;">Find your next ride across Nairobi.</p>
+        </div>
+    </header>
+
+    <main>
+        <div
+            style="max-width: 600px; margin: -50px auto 3rem; display: flex; flex-direction: column; gap: 1rem; position: relative; z-index: 10;">
+            <!-- County Selector -->
+            <div class="glass"
+                style="padding: 1.2rem 2rem; display: flex; align-items: center; gap: 1rem; border-radius: 3rem; background: #1e293b; border: 2px solid var(--glass-border);">
+                <span style="font-size: 0.8rem; color: var(--primary); font-weight: 800; white-space: nowrap;">CURRENT
+                    COUNTY:</span>
+                <select id="countySelect" onchange="updateLocation()"
+                    style="margin-bottom: 0; background: transparent; border: none; padding: 0.2rem; cursor: pointer; color: white; font-weight: 600; font-size: 0.95rem; width: 100%;">
+                    <!-- Populated by JS -->
+                </select>
+                <style>
+                    #countySelect option {
+                        color: black !important;
+                    }
+                </style>
+            </div>
+
+            <!-- Search Bar (Now a Dropdown for Local Stages) -->
+            <div
+                style="background: #1e293b; border-radius: 3rem; padding: 0.2rem; border: 2px solid var(--glass-border); box-shadow: 0 20px 40px rgba(0,0,0,0.4); display: flex; align-items: center; padding-right: 1.5rem;">
+                <span
+                    style="font-size: 0.8rem; color: var(--secondary); font-weight: 800; white-space: nowrap; margin-left: 2rem;">DESTINATION:</span>
+                <select id="stageSelect" onchange="filterRoutes()"
+                    style="margin-bottom:0; border:none; background:transparent; padding: 1.2rem 1rem; width: 100%; color: white; font-weight: 600; cursor: pointer;">
+                    <option value="">All Regions</option>
+                </select>
+                <style>
+                    #stageSelect option {
+                        color: black !important;
+                    }
+                </style>
+            </div>
+
+            <!-- Target County Selector -->
+            <div class="glass"
+                style="padding: 1.2rem 2rem; display: flex; align-items: center; gap: 1rem; border-radius: 3rem; background: #1e293b; border: 2px solid var(--glass-border);">
+                <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 800; white-space: nowrap;">TRAVEL TO
+                    COUNTY:</span>
+                <select id="targetCountySelect" onchange="filterRoutes()"
+                    style="margin-bottom: 0; background: transparent; border: none; padding: 0.2rem; cursor: pointer; color: white; font-weight: 600; font-size: 0.95rem; width: 100%;">
+                    <option value="">Same County (Local)</option>
+                    <!-- Populated by JS -->
+                </select>
+                <style>
+                    #targetCountySelect option {
+                        color: black !important;
+                    }
+                </style>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="glass card">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">📍 Nearby Hubs</h3>
+                <div id="passenger-stations"></div>
+            </div>
+            <div class="glass card" style="grid-column: span 2;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">🚐 Available Matatus</h3>
+                <div id="passenger-fleet"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                </div>
+            </div>
+
+            <!-- Simple Map Simulation -->
+            <div class="glass card"
+                style="grid-column: span 3; min-height: 300px; position: relative; overflow: hidden; background: #070b14;">
+                <div style="position: relative; z-index: 5;">
+                    <h3 style="color: var(--secondary);">🗺️ Live Network Map</h3>
+                    <p style="font-size: 0.7rem; color: #64748b;">Real-time transponder signals for <span
+                            id="map-county-name">Nairobi</span></p>
+                </div>
+                <div id="map-simulation" style="position: absolute; inset: 0; opacity: 0.4;">
+                    <div class="radar-line"></div>
+                    <!-- Dots will be spawned here -->
+                </div>
+                <style>
+                    #map-simulation {
+                        background-image:
+                            linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+                        background-size: 40px 40px;
+                    }
+
+                    .radar-line {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 2px;
+                        background: var(--secondary);
+                        box-shadow: 0 0 15px var(--secondary);
+                        animation: scan 4s linear infinite;
+                        opacity: 0.5;
+                    }
+
+                    @keyframes scan {
+                        from {
+                            top: 0;
+                        }
+
+                        to {
+                            top: 100%;
+                        }
+                    }
+
+                    .map-dot {
+                        position: absolute;
+                        width: 8px;
+                        height: 8px;
+                        background: var(--primary);
+                        border-radius: 50%;
+                        box-shadow: 0 0 10px var(--primary);
+                        animation: pulse 2s infinite ease-out;
+                    }
+
+                    @keyframes pulse {
+                        0% {
+                            opacity: 1;
+                            transform: scale(1);
+                        }
+
+                        100% {
+                            opacity: 0;
+                            transform: scale(3);
+                        }
+                    }
+                </style>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="mainToast"></div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const user = localStorage.getItem('matatu_user') || 'Guest';
+            document.getElementById('username').innerText = user;
+            document.getElementById('welcome-name').innerText = user;
+
+            // Populate Counties
+            const select = document.getElementById('countySelect');
+            const targetSelect = document.getElementById('targetCountySelect');
+
+            COUNTIES.sort().forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.innerText = c + " County";
+                if (c === "Nairobi") opt.selected = true;
+                select.appendChild(opt.cloneNode(true));
+                targetSelect.appendChild(opt);
+            });
+
+            renderPassengerView();
+            populateStages();
+        });
+
+        // Background Slideshow Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        function rotateSlides() {
+            if (slides.length === 0) return;
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(rotateSlides, 5000);
+
+        function populateStages() {
+            const county = document.getElementById('countySelect').value;
+            const select = document.getElementById('stageSelect');
+            const data = COUNTY_DATA[county] || { stations: [], towns: [], subCounties: [] };
+
+            select.innerHTML = '<option value="">All Destinations</option>';
+
+            // Sub-Counties
+            if (data.subCounties && data.subCounties.length > 0) {
+                const group = document.createElement('optgroup');
+                group.label = "Sub-Counties";
+                data.subCounties.sort().forEach(sc => {
+                    const opt = document.createElement('option');
+                    opt.value = sc;
+                    opt.innerText = sc;
+                    group.appendChild(opt);
+                });
+                select.appendChild(group);
+            }
+
+            // Towns / Places
+            if (data.towns && data.towns.length > 0) {
+                const group = document.createElement('optgroup');
+                group.label = "Major Towns / Places";
+                data.towns.sort().forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.innerText = t;
+                    group.appendChild(opt);
+                });
+                select.appendChild(group);
+            }
+
+            // Transit Hubs
+            if (data.stations && data.stations.length > 0) {
+                const group = document.createElement('optgroup');
+                group.label = "Transit Hubs / Stages";
+                data.stations.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.name;
+                    opt.innerText = s.name;
+                    group.appendChild(opt);
+                });
+                select.appendChild(group);
+            }
+        }
+
+        function updateLocation() {
+            const county = document.getElementById('countySelect').value;
+            showToast(`📍 Location updated to ${county} County`, "var(--primary)");
+
+            populateStages();
+            renderPassengerView();
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+        function renderPassengerView() {
+            const county = document.getElementById('countySelect').value;
+            const data = COUNTY_DATA[county] || { stations: [], fleet: [] };
+
+            const sList = document.getElementById('passenger-stations');
+            if (data.stations.length > 0) {
+                sList.innerHTML = data.stations.map(s => `
+                    <div class="item-row">
+                        <div>
+                            <strong>${s.name}</strong>
+                            <p style="font-size:0.75rem; color:#64748b;">${s.distance} • Local Hub</p>
+                        </div>
+                        <span class="status-badge ${s.congestion === 'Low' ? 'status-free' : 'status-busy'}">${s.congestion}</span>
+                    </div>
+                `).join('');
+            } else {
+                sList.innerHTML = `<p style="padding:1rem; color:#64748b; font-size:0.8rem;">No local hubs registered in ${county}. Searching nearby...</p>`;
+            }
+
+            const fList = document.getElementById('passenger-fleet');
+            if (data.fleet.length > 0) {
+                fList.innerHTML = data.fleet.map(car => `
+                    <div class="fleet-card">
+                        <div class="fleet-card-img" style="background-image: url('${car.img}')"></div>
+                        <div class="fleet-card-content">
+                            <div>
+                                <strong style="color:var(--primary);">${car.id}</strong>
+                                <p style="font-size:0.75rem; color:#94a3b8;">${car.company} • R-${car.route}</p>
+                                <div style="font-size:0.65rem; color: #10b981; margin-top: 4px; font-weight: 700;">💺 ${14 - car.seats.filter(s => s === 1).length} Seats Free</div>
+                                <button class="nav-btn" style="margin-top: 0.8rem; border-color: var(--primary); color: var(--primary); font-size: 0.7rem; width: 100%;" 
+                                    onclick="bookSeat('${car.id}')" ${car.seats.filter(s => s === 0).length === 0 ? 'disabled' : ''}>
+                                    ${car.seats.filter(s => s === 0).length === 0 ? 'Fully Booked' : 'Book Seat Now'}
+                                </button>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-weight:800; font-size:1.1rem; color:${car.eta < 5 ? 'var(--danger)' : 'white'};">${car.eta}m</span>
+                                <div style="font-size:0.5rem; color:#64748b;">ARRIVAL</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                fList.innerHTML = `<div style="grid-column: span 2; padding:3rem; text-align:center; color:#64748b; border: 1px dashed var(--glass-border); border-radius:1rem; background: rgba(0,0,0,0.2);">
+                    <div style="font-size:4rem; margin-bottom:1rem; filter: grayscale(1); opacity: 0.5;">🚐</div>
+                    <h2 style="color: #94a3b8; font-weight: 800; margin-bottom: 0.5rem;">No Matatu</h2>
+                    <p style="font-size: 0.9rem;">No active fleet signals for ${county} County at this time.</p>
+                </div>`;
+            }
+        }
+
+        function filterRoutes() {
+            const county = document.getElementById('countySelect').value;
+            const targetCounty = document.getElementById('targetCountySelect').value;
+            const data = COUNTY_DATA[county] || { stations: [], fleet: [] };
+            const q = document.getElementById('stageSelect').value.toLowerCase();
+
+            let filtered = data.fleet;
+
+            // If a specific target county is chosen, look for connections
+            if (targetCounty && targetCounty !== county) {
+                // Filter for vehicles heading to that target county
+                filtered = data.fleet.filter(f => f.route.toLowerCase().includes(targetCounty.toLowerCase()));
+            } else if (q) {
+                // Filter by specific local stage
+                filtered = data.fleet.filter(f => f.route.toLowerCase().includes(q) || f.company.toLowerCase().includes(q) || f.id.toLowerCase().includes(q));
+            }
+
+            const fList = document.getElementById('passenger-fleet');
+            if (filtered.length > 0) {
+                fList.innerHTML = filtered.map(car => `
+                    <div class="fleet-card">
+                        <div class="fleet-card-img" style="background-image: url('${car.img}')"></div>
+                        <div class="fleet-card-content">
+                            <div>
+                                <strong style="color:var(--primary);">${car.id}</strong>
+                                <p style="font-size:0.75rem; color:#94a3b8;">${car.company} • R-${car.route}</p>
+                                <div style="font-size:0.65rem; color: #10b981; margin-top: 4px; font-weight: 700;">💺 ${14 - car.seats.filter(s => s === 1).length} Seats Free</div>
+                                <button class="nav-btn" style="margin-top: 0.8rem; border-color: var(--primary); color: var(--primary); font-size: 0.7rem; width: 100%;" 
+                                    onclick="bookSeat('${car.id}')" ${car.seats.filter(s => s === 0).length === 0 ? 'disabled' : ''}>
+                                    ${car.seats.filter(s => s === 0).length === 0 ? 'Fully Booked' : 'Book Seat Now'}
+                                </button>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-weight:800; font-size:1.1rem; color:white;">${car.eta}m</span>
+                                <div style="font-size:0.5rem; color:#64748b;">ARRIVAL</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                fList.innerHTML = `<div style="grid-column: span 2; padding:3rem; text-align:center; color:#64748b; border: 1px dashed var(--glass-border); border-radius:1rem; width: 100%; margin-top: 1rem; background: rgba(0,0,0,0.2);">
+                    <div style="font-size:4rem; margin-bottom:1rem; filter: grayscale(1); opacity: 0.5;">🚐</div>
+                    <h2 style="color: #94a3b8; font-weight: 800; margin-bottom: 0.5rem;">No Matatu</h2>
+                    <p style="font-size: 0.9rem;">No active vehicles found connecting ${county} to ${targetCounty || 'your destination'}.</p>
+                </div>`;
+            }
+        }
+
+        function bookSeat(fleetId) {
+            const vehicle = FLEET.find(f => f.id === fleetId);
+            if (!vehicle) return;
+
+            const freeIndex = vehicle.seats.indexOf(0);
+            if (freeIndex !== -1) {
+                vehicle.seats[freeIndex] = 1;
+                showToast(`🎟️ BOOKING SUCCESSFUL: ${fleetId} Seat Row ${Math.ceil((freeIndex + 1) / 2)}`, "var(--secondary)");
+                renderPassengerView();
+                filterRoutes();
+            } else {
+                alert("Sorry, this vehicle is already full.");
+            }
+        }
+
+        // Initialize Map Simulation
+        function initMap() {
+            const map = document.getElementById('map-simulation');
+            const county = document.getElementById('countySelect').value;
+            document.getElementById('map-county-name').innerText = county;
+
+            // Clear old dots
+            map.querySelectorAll('.map-dot').forEach(d => d.remove());
+
+            // Add new dots based on fleet size
+            const count = Math.min(10, (COUNTY_DATA[county]?.fleet?.length || 0) + 3);
+            for (let i = 0; i < count; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'map-dot';
+                dot.style.top = Math.random() * 80 + 10 + '%';
+                dot.style.left = Math.random() * 80 + 10 + '%';
+                dot.style.animationDelay = Math.random() * 2 + 's';
+                map.appendChild(dot);
+            }
+        }
+        setInterval(initMap, 10000);
+        setTimeout(initMap, 500);
+    </script>
+</body>
+
+</html>

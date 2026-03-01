@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matatu Hub | Fleet Command</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/data.js" defer></script>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">MATATU HUB</div>
+        <div id="user-display"
+            style="font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 1rem;">
+            <span id="user-role-label">COMPANY: <span id="username"></span></span>
+            <button class="nav-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="slideshow-container" style="position: absolute; inset: 0; z-index: -1;">
+            <div class="slide active" style="background-image: url('assets/hero.png');"></div>
+            <div class="slide" style="background-image: url('assets/super_metro.png');"></div>
+            <div class="slide" style="background-image: url('assets/citi_hoppa.png');"></div>
+            <div class="slideshow-overlay" style="background: linear-gradient(rgba(15, 23, 42, 0.4), var(--bg));"></div>
+        </div>
+        <div id="header-text" style="position: relative; z-index: 2;">
+            <h1 style="font-size: 2.5rem;">Fleet Command Center</h1>
+            <p style="color: #94a3b8;">Monitor operations and network health in real-time.</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="dashboard-grid">
+            <!-- SOS Feed -->
+            <div class="glass card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--danger);">🚨 Network SOS</h3>
+                    <button class="nav-btn" style="border-color: var(--danger); font-size: 0.7rem;"
+                        onclick="broadcastSOS()">I Need Help</button>
+                </div>
+                <div id="company-sos-feed"></div>
+            </div>
+
+            <!-- Fleet Tracking -->
+            <div class="glass card" style="grid-column: span 2;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">📶 Live Fleet Telemetry</h3>
+                <div id="company-fleet-tracking"></div>
+            </div>
+
+            <!-- Booked Seats -->
+            <div class="glass card" style="grid-column: span 3;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--secondary);">🎫 Today's Bookings</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;"
+                    id="company-bookings"></div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="mainToast"></div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const user = localStorage.getItem('matatu_user') || 'Admin';
+            document.getElementById('username').innerText = user;
+            renderCompanyView();
+        });
+
+        // Background Slideshow Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        function rotateSlides() {
+            if (slides.length === 0) return;
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(rotateSlides, 5000);
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+        function renderCompanyView() {
+            const user = localStorage.getItem('matatu_user') || 'Admin';
+            const sosList = document.getElementById('company-sos-feed');
+            sosList.innerHTML = STATIONS.filter(s => s.helpNeeded).map(s => `
+                <div class="item-row help-alert">
+                    <div>
+                        <strong>${s.company} SOS</strong>
+                        <p style="font-size:0.75rem; color:#94a3b8;">Station: ${s.name}</p>
+                    </div>
+                    <button class="nav-btn" style="border-color:var(--secondary); color:var(--secondary); font-size:0.7rem;" onclick="offerHelp('${s.name}')">Resolve</button>
+                </div>
+            `).join('') || '<p style="color:#64748b; padding:1rem; text-align:center;">Network Stable</p>';
+
+            const trackList = document.getElementById('company-fleet-tracking');
+            const fleetToView = FLEET.filter(f => f.company.toLowerCase().includes(user.toLowerCase()) || user === 'Admin' || user === 'Fleet ID');
+
+            trackList.innerHTML = fleetToView.map(f => `
+                <div class="item-row">
+                    <div style="display:flex; align-items:center; gap:1rem;">
+                        <img src="${f.img}" style="width:40px; height:40px; border-radius:0.5rem; object-fit:cover;">
+                        <div>
+                            <strong>${f.id}</strong>
+                            <p style="font-size:0.7rem; color:#94a3b8;">Route ${f.route} • Telemetry OK</p>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span class="status-badge status-free">Live</span>
+                        <div style="font-size:0.6rem; color:#64748b; margin-top:4px;">ETA: ${f.eta}m</div>
+                    </div>
+                </div>
+            `).join('') || `<p style="color:#64748b; padding:3rem; text-align:center; border: 1px dashed var(--glass-border); border-radius:1rem;">No active telemetry for "${user}"</p>`;
+
+            const bookList = document.getElementById('company-bookings');
+            bookList.innerHTML = fleetToView.map(f => {
+                const bookedCount = f.seats.filter(s => s === 1).length;
+                return `
+                <div class="glass card" style="background: rgba(0,0,0,0.2);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                        <strong>${f.id}</strong>
+                        <span style="color:var(--secondary); font-size:0.8rem;">${bookedCount}/14 Booked</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:4px;">
+                        ${f.seats.map(s => `<div style="height:10px; border-radius:3px; background:${s === 1 ? 'var(--secondary)' : 'var(--glass-border)'};"></div>`).join('')}
+                    </div>
+                </div>
+            `}).join('') || `<p style="color:#64748b; padding:2rem; text-align:center; grid-column: span 3;">No pending bookings found for your fleet.</p>`;
+        }
+
+        function broadcastSOS() {
+            showToast("🚨 SERVICE SOS BROADCASTED TO NETWORK", "var(--danger)");
+        }
+
+        function offerHelp(station) {
+            showToast(`✅ ASSISTANCE SENT TO ${station.toUpperCase()}`, "var(--secondary)");
+        }
+    </script>
+</body>
+
+</html>

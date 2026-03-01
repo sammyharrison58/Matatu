@@ -4,559 +4,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matatu Hub | Premium Kenyan Transit</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Matatu Hub | Entrance</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #f59e0b;
-            /* Kenyan Gold */
-            --secondary: #10b981;
-            /* Kenyan Green */
-            --danger: #ef4444;
-            /* Alert Red */
-            --bg: #0f172a;
-            /* Deep Charcoal */
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text: #f8fafc;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
-        }
-
-        .glass {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 1.5rem;
-        }
-
-        nav {
-            padding: 1.5rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(to right, var(--primary), #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.05rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text);
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .nav-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: var(--bg);
-            font-weight: 600;
-        }
-
-        main {
-            padding: 120px 5% 50px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
-        }
-
-        h1 {
-            font-size: clamp(2.2rem, 6vw, 4rem);
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .highlight {
-            color: var(--primary);
-        }
-
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto 3rem;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1.2rem 2rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 2rem;
-            color: white;
-            font-size: 1.1rem;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .search-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-
-        .card {
-            padding: 2rem;
-            position: relative;
-            transition: 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(245, 158, 11, 0.3);
-        }
-
-        .fleet-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem;
-            border-bottom: 1px solid var(--glass-border);
-            animation: slideIn 0.4s ease forwards;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .status-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 2rem;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .status-free {
-            background: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-        }
-
-        .status-busy {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            place-items: center;
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal {
-            width: 90%;
-            max-width: 400px;
-            padding: 2.5rem;
-            text-align: center;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 1rem;
-            background: var(--primary);
-            border: none;
-            border-radius: 0.75rem;
-            color: var(--bg);
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: 0.3s;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: scale(0.98);
-        }
-
-        .pulse {
-            width: 8px;
-            height: 8px;
-            background: var(--secondary);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.4;
-                transform: scale(1.2);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 2rem;
-            background: var(--danger);
-            color: white;
-            border-radius: 1rem;
-            transform: translateY(150px);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 3000;
-            font-weight: 600;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .toast.show {
-            transform: translateY(0);
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--glass-border);
-            border-radius: 0.75rem;
-            color: white;
-            outline: none;
-            margin-bottom: 1rem;
-        }
-
-        .eta-block {
-            text-align: right;
-            min-width: 60px;
-        }
-
-        .eta-value {
-            font-size: 1.1rem;
-            font-weight: 800;
-        }
-
-        .eta-label {
-            font-size: 0.6rem;
-            color: #94a3b8;
-            letter-spacing: 1px;
-        }
-
-        @media (max-width: 600px) {
-            nav {
-                padding: 1rem;
-            }
-
-            .logo {
-                font-size: 1.4rem;
-            }
-
-            .nav-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-            }
-
-            main {
-                padding-top: 100px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
+    <nav>
+        <div class="logo">MATATU HUB</div>
+        <button class="nav-btn active" onclick="showAuth()">Login</button>
+    </nav>
 
-    <div class="modal-overlay" id="loginModal">
-        <div class="glass modal">
-            <h2 style="margin-bottom: 0.5rem;">Access Hub</h2>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem;">Switch between Passenger or Fleet modes.
-            </p>
-            <div style="display: grid; gap: 0.5rem; margin-bottom: 1rem;">
-                <button class="nav-btn active" style="width: 100%;">I am a Passenger</button>
-                <button class="nav-btn" style="width: 100%;">I am a Fleet Manager</button>
+    <main id="home-page">
+        <section class="hero">
+            <div class="slideshow-container">
+                <div class="slide active" style="background-image: url('assets/hero.png');"></div>
+                <div class="slide" style="background-image: url('assets/super_metro.png');"></div>
+                <div class="slide" style="background-image: url('assets/citi_hoppa.png');"></div>
+                <div class="slideshow-overlay"></div>
             </div>
-            <input type="email" placeholder="Email / Corporate ID">
-            <input type="password" placeholder="Key Phrase">
-            <button class="btn-primary" onclick="closeModal()">Enter Matatu Hub</button>
-            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: #94a3b8;">Lost access? <span
-                    style="color: var(--primary); cursor: pointer;">Reset Credentials</span></p>
+            <h1>Kenya's Smartest Transit Network</h1>
+            <p>Experience the future of public transport. From real-time tracking across 47 counties to instant safety
+                alerts, Matatu Hub connects passengers and fleet companies like never before.</p>
+            <button class="btn-primary" style="max-width: 250px; font-size: 1.2rem; padding: 1.5rem;"
+                onclick="showAuth()">Get Started</button>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-item glass">
+                <span>📍</span>
+                <h3>Nationwide Routes</h3>
+                <p>Connect with matatus across all 47 counties. From Nairobi to Mandera, we've got you covered.</p>
+            </div>
+            <div class="feature-item glass">
+                <span>🚨</span>
+                <h3>Safety First</h3>
+                <p>Instant SOS alerts and real-time station congestion monitoring for a secure journey.</p>
+            </div>
+            <div class="feature-item glass">
+                <span>🛡️</span>
+                <h3>Secure Access</h3>
+                <p>Industrial grade 2-Factor Authentication for companies ensures fleet protection.</p>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2>About the Network</h2>
+            <p>Matatu Hub is a revolutionary digital ecosystem designed to streamline the iconic Kenyan matatu industry.
+                By bridging the gap between local fleet owners and daily commuters, we provide transparency, safety, and
+                efficiency to millions of users daily.</p>
+        </section>
+    </main>
+
+    <div id="auth-screen">
+        <div class="slideshow-container">
+            <div class="slide active" style="background-image: url('assets/hero.png');"></div>
+            <div class="slide" style="background-image: url('assets/super_metro.png');"></div>
+            <div class="slide" style="background-image: url('assets/citi_hoppa.png');"></div>
+            <div class="slideshow-overlay"></div>
+        </div>
+        <div class="glass auth-card" style="position: relative;">
+            <button onclick="hideAuth()"
+                style="position: absolute; top: 1rem; right: 1.5rem; background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.5rem;">&times;</button>
+            <div class="logo" style="font-size: 2.5rem; margin-bottom: 1rem;">MATATU HUB</div>
+            <p style="color: #94a3b8;">Choose your entry node to continue.</p>
+
+            <div class="role-selector">
+                <div class="role-btn selected" id="role-passenger" onclick="selectRole('passenger')">
+                    <span>🚶‍♂️</span>
+                    <strong>Passenger</strong>
+                    <small style="color:#64748b; font-size: 0.7rem;">Find & Book Trips</small>
+                </div>
+                <div class="role-btn" id="role-company" onclick="selectRole('company')">
+                    <span>🏢</span>
+                    <strong>Company</strong>
+                    <small style="color:#64748b; font-size: 0.7rem;">Fleet Control & SOS</small>
+                </div>
+            </div>
+
+            <div style="text-align: left;">
+                <div id="login-fields">
+                    <label style="font-size: 0.8rem; color: #64748b; margin-left: 0.5rem;">Access Credentials</label>
+                    <input type="text" id="auth-user" placeholder="Email or Fleet ID">
+                    <input type="password" id="auth-pass" placeholder="••••••••">
+                </div>
+                <div id="verify-fields" style="display: none;">
+                    <label style="font-size: 0.8rem; color: var(--primary); margin-left: 0.5rem;">Security Code
+                        Sent</label>
+                    <input type="text" id="v-code" placeholder="Enter 6-digit code"
+                        style="border-color: var(--primary);">
+                </div>
+                <button class="btn-primary" id="login-btn" onclick="handleLogin()">Enter Dashboard</button>
+            </div>
         </div>
     </div>
 
-    <div class="toast" id="sosToast">🚨 REINFORCEMENT REQUESTED: Station Overload Alert!</div>
-
-    <nav>
-        <div class="logo">MATATU HUB</div>
-        <div class="nav-links">
-            <button class="nav-btn active" id="pBtn" onclick="toggleView('passenger')">Passenger</button>
-            <button class="nav-btn" id="cBtn" onclick="toggleView('company')">Fleet Control</button>
-        </div>
-        <button class="nav-btn" style="border-color: var(--primary); color: var(--primary);"
-            onclick="openModal()">Secure Log In</button>
-    </nav>
-
-    <main>
-        <!-- PASSENGER VIEW -->
-        <div id="passengerView">
-            <section class="hero">
-                <h1>Trips in <span class="highlight">Motion.</span></h1>
-                <p style="color: #94a3b8;">Real-time intelligence for the modern Nairobi commuter.</p>
-            </section>
-
-            <div class="search-container">
-                <input type="text" id="routeSearch" class="search-input"
-                    placeholder="Search Route (e.g. 111, 46) or Estate (Rongai, Westlands)" onkeyup="filterRoutes()">
-            </div>
-
-            <div class="dashboard-grid">
-                <div class="glass card">
-                    <h3 style="margin-bottom: 1.5rem;">📍 Station Intelligence</h3>
-                    <div id="stationList"></div>
-                </div>
-
-                <div class="glass card" style="grid-column: span 2;">
-                    <h3 style="margin-bottom: 1.5rem;">🚐 Live Signal Feed</h3>
-                    <div id="fleetList"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- COMPANY VIEW -->
-        <div id="companyView" style="display: none;">
-            <div class="dashboard-grid">
-                <div class="glass card">
-                    <h3>Onboard Vehicle</h3>
-                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem;">Register a new signal to your
-                        fleet.</p>
-                    <div>
-                        <input type="text" id="regInput" placeholder="KCH 000X">
-                        <select id="routeInput">
-                            <option value="111">Route 111 (Rongai)</option>
-                            <option value="46">Route 46 (Kawangware)</option>
-                            <option value="23">Route 23 (Westlands)</option>
-                            <option value="58">Route 58 (Buruburu)</option>
-                            <option value="102">Route 102 (Dagoretti)</option>
-                            <option value="48">Route 48 (Lavington)</option>
-                        </select>
-                        <button class="btn-primary" onclick="addVehicle()">Activate Live Tracking</button>
-                    </div>
-                </div>
-
-                <div class="glass card" style="grid-column: span 2;">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
-                        <div>
-                            <h3>Active Fleet Health</h3>
-                            <p style="color: #94a3b8; font-size: 0.9rem;">Monitoring your operational assets.</p>
-                        </div>
-                        <button class="btn-primary" style="width: auto; background: var(--danger); color: white;"
-                            onclick="triggerSOS()">🚨 Broadcast Service SOS</button>
-                    </div>
-                    <div id="companyFleetList"></div>
-                </div>
-            </div>
-        </div>
-    </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        const MOCK_DATA = [
-            { id: 'KCH 111A', route: '111', station: 'Galleria', eta: 4, company: 'Super Metro' },
-            { id: 'KBB 462W', route: '46', station: 'Prestige', eta: 11, company: 'Citi Hoppa' },
-            { id: 'KDD 230Z', route: '23', station: 'Sarit Centre', eta: 2, company: 'Double M' },
-            { id: 'KCA 001B', route: '111', station: 'CBD Hub', eta: 1, company: 'Super Metro' },
-            { id: 'KDE 588T', route: '58', station: 'Buruburu Ph 1', eta: 7, company: 'Forward Travellers' },
-            { id: 'KCF 125X', route: '125', station: 'Rongai Base', eta: 15, company: 'Oromats' },
-            { id: 'KCG 102S', route: '102', station: 'Dagoretti', eta: 9, company: 'StarBus' },
-            { id: 'KBA 480Q', route: '48', station: 'Lavington', eta: 5, company: 'Bus Track' },
-            { id: 'KCH 777S', route: '111', station: 'Madaraka', eta: 3, company: 'Super Metro' },
-            { id: 'KCB 460M', route: '46', station: 'Yaya Centre', eta: 8, company: 'Citi Hoppa' },
-            { id: 'KDD 023P', route: '23', station: 'Westlands', eta: 12, company: 'Double M' },
-            { id: 'KCF 126Y', route: '126', station: 'Ongata Rongai', eta: 18, company: 'Oromats' }
-        ];
+        (function () {
+            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with real key
+        })();
 
-        const STATIONS = [
-            { name: 'CBD Central Hub', congestion: 'High', distance: '0.2km', helpNeeded: false },
-            { name: 'Westlands Terminal', congestion: 'Low', distance: '4.5km', helpNeeded: false },
-            { name: 'Ngong Road Stage', congestion: 'Medium', distance: '3.1km', helpNeeded: false },
-            { name: 'Buruburu Terminal', congestion: 'High', distance: '12.4km', helpNeeded: false },
-            { name: 'Rongai Galleria', congestion: 'Low', distance: '15.8km', helpNeeded: false },
-            { name: 'Kawangware Base', congestion: 'Medium', distance: '8.2km', helpNeeded: false }
-        ];
+        let selectedRole = 'passenger';
+        let generatedCode = '';
 
-        function initApp() {
-            renderFleet(MOCK_DATA);
-            renderStations();
-            renderCompanyFleet();
+        function showAuth() {
+            document.getElementById('auth-screen').classList.add('visible');
+        }
 
-            // Simulating Live Signal plus traffic jitter (dynamic updates)
-            setInterval(() => {
-                MOCK_DATA.forEach(car => {
-                    const jitter = Math.random();
-                    if (jitter > 0.45) { // ETA Decreases
-                        if (car.eta > 1) car.eta -= 1;
-                        else car.eta = Math.floor(Math.random() * 15) + 5;
-                    } else if (jitter < 0.1) { // Traffic Delay Jitter
-                        car.eta += 1;
+        function hideAuth() {
+            document.getElementById('auth-screen').classList.remove('visible');
+        }
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.getElementById('role-passenger').classList.toggle('selected', role === 'passenger');
+            document.getElementById('role-company').classList.toggle('selected', role === 'company');
+
+            // Reset fields
+            document.getElementById('login-fields').style.display = 'block';
+            document.getElementById('verify-fields').style.display = 'none';
+            document.getElementById('login-btn').innerText = "Enter Dashboard";
+        }
+
+        async function handleLogin() {
+            const user = document.getElementById('auth-user').value || 'Guest';
+            const btn = document.getElementById('login-btn');
+
+            if (selectedRole === 'company') {
+                if (document.getElementById('verify-fields').style.display === 'none') {
+                    // Step 1: Generate & "Send" Code
+                    generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+                    // console.log simulation
+                    console.log(`[ALERT] Notifying sammyharrison58@gmail.com of login attempt by ${user}`);
+                    console.log(`[SECURITY] Sending code ${generatedCode} to user email.`);
+
+                    btn.innerText = "Verifying Identity...";
+                    btn.disabled = true;
+
+                    /* 
+                       EmailJS Integration:
+                       emailjs.send("service_id", "template_id", {
+                           to_email: user,
+                           admin_email: "sammyharrison58@gmail.com",
+                           verification_code: generatedCode
+                       });
+                    */
+
+                    setTimeout(() => {
+                        document.getElementById('login-fields').style.display = 'none';
+                        document.getElementById('verify-fields').style.display = 'block';
+                        btn.disabled = false;
+                        btn.innerText = "Confirm Security Code";
+                        alert(`SECURITY ALERT: A code has been sent to ${user}. \nFor demo purposes, the code is: ${generatedCode}`);
+                    }, 1200);
+                } else {
+                    // Step 2: Verify Code
+                    const entered = document.getElementById('v-code').value;
+                    if (entered === generatedCode) {
+                        finalizeLogin(user, 'company');
+                    } else {
+                        alert('Incorrect code. Access Denied.');
                     }
-                });
-                renderFleet(MOCK_DATA);
-                renderCompanyFleet();
-            }, 8000);
+                }
+            } else {
+                // Passengers log in directly
+                finalizeLogin(user, 'passenger');
+            }
         }
 
-        function renderStations() {
-            const list = document.getElementById('stationList');
-            list.innerHTML = STATIONS.map(s => `
-                <div class="fleet-item" style="${s.helpNeeded ? 'border-left: 3px solid var(--danger)' : ''}">
-                    <div>
-                        <strong>${s.name} ${s.helpNeeded ? '⚠️' : ''}</strong>
-                        <p style="font-size: 0.8rem; color: #94a3b8;">${s.distance} • ${s.helpNeeded ? '<span style="color:var(--danger)">Help Requested</span>' : 'Standard Ops'}</p>
-                    </div>
-                    <span class="status-badge ${s.congestion === 'Low' ? 'status-free' : 'status-busy'}">${s.congestion}</span>
-                </div>
-            `).join('');
+        function finalizeLogin(user, role) {
+            localStorage.setItem('matatu_user', user);
+            localStorage.setItem('matatu_role', role);
+            window.location.href = role + '.html';
         }
 
-        function renderFleet(data) {
-            const list = document.getElementById('fleetList');
-            list.innerHTML = data.map(car => `
-                <div class="fleet-item">
-                    <div>
-                        <span class="pulse" style="background: ${car.eta < 3 ? 'var(--danger)' : 'var(--secondary)'}"></span>
-                        <strong>${car.id}</strong> <span style="font-size: 0.75rem; color: #94a3b8">(${car.company})</span>
-                        <p style="font-size: 0.8rem; color: #94a3b8;">Route ${car.route} | near ${car.station}</p>
-                    </div>
-                    <div class="eta-block">
-                        <div class="eta-value" style="color: ${car.eta < 3 ? 'var(--danger)' : 'var(--primary)'};">${car.eta}m</div>
-                        <div class="eta-label">ETA</div>
-                    </div>
-                </div>
-            `).join('');
+        // Background Slideshow Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        function rotateSlides() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
         }
-
-        function renderCompanyFleet() {
-            const list = document.getElementById('companyFleetList');
-            list.innerHTML = MOCK_DATA.filter(c => c.company === 'Super Metro').map(car => `
-                <div class="fleet-item">
-                    <div>
-                        <strong>${car.id}</strong> signal active
-                        <p style="font-size: 0.7rem; color: #94a3b8;">Tracking near: ${car.station}</p>
-                    </div>
-                    <div><span class="status-badge status-free">${car.eta < 5 ? 'ON-TIME' : 'DELAYED'}</span></div>
-                    <button class="nav-btn" style="padding: 0.35rem 0.7rem; font-size: 0.7rem;">COMMAND</button>
-                </div>
-            `).join('');
-        }
-
-        function filterRoutes() {
-            const query = document.getElementById('routeSearch').value.toLowerCase();
-            const filtered = MOCK_DATA.filter(c =>
-                c.route.includes(query) ||
-                c.station.toLowerCase().includes(query) ||
-                c.id.toLowerCase().includes(query) ||
-                c.company.toLowerCase().includes(query)
-            );
-            renderFleet(filtered);
-        }
-
-        function toggleView(view) {
-            document.getElementById('passengerView').style.display = view === 'passenger' ? 'block' : 'none';
-            document.getElementById('companyView').style.display = view === 'company' ? 'block' : 'none';
-            document.getElementById('pBtn').classList.toggle('active', view === 'passenger');
-            document.getElementById('cBtn').classList.toggle('active', view === 'company');
-        }
-
-        function addVehicle() {
-            const reg = document.getElementById('regInput').value.toUpperCase();
-            const route = document.getElementById('routeInput').value;
-            if (!reg) return alert('Enter registration code!');
-
-            MOCK_DATA.unshift({ id: reg, route: route, station: 'Base Terminal', eta: 12, company: 'Super Metro' });
-            renderCompanyFleet();
-            renderFleet(MOCK_DATA);
-            document.getElementById('regInput').value = '';
-
-            showToast(`✅ FLEET ONBOARDED: ${reg} signal is now broadcast!`, "var(--secondary)");
-        }
-
-        function triggerSOS() {
-            STATIONS[3].helpNeeded = true; // Mark Buruburu as needing help
-            STATIONS[3].congestion = "High";
-            renderStations();
-            showToast("🚨 SERVICE SOS BROADCAST: Buruburu Terminal requires reinforcement!", "var(--danger)");
-        }
-
-        function showToast(msg, color) {
-            const toast = document.getElementById('sosToast');
-            toast.innerText = msg;
-            toast.style.background = color;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4500);
-        }
-
-        function openModal() { document.getElementById('loginModal').style.display = 'grid'; }
-        function closeModal() { document.getElementById('loginModal').style.display = 'none'; }
-
-        initApp();
+        setInterval(rotateSlides, 5000);
     </script>
 </body>
 
