@@ -8,54 +8,661 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/data.js" defer></script>
+    <style>
+        /* ===== Tab Navigation ===== */
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+            padding: 0.7rem 1.4rem;
+            border: 1px solid transparent;
+            background: transparent;
+            color: #64748b;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.25s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #0f172a;
+            border-color: var(--primary);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== Company Profile Banner ===== */
+        .company-banner {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(15, 23, 42, 0.6));
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .company-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 1rem;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            flex-shrink: 0;
+        }
+
+        .company-name-edit {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .company-name-display {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .company-name-input {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            background: transparent;
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.7rem;
+            display: none;
+            width: auto;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+
+        .edit-icon {
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+
+        .edit-icon:hover {
+            color: var(--primary);
+        }
+
+        .banner-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+
+        .banner-stat {
+            text-align: center;
+        }
+
+        .banner-stat .val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .banner-stat .lbl {
+            font-size: 0.6rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== Vehicle Registration Form ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 1.5rem;
+        }
+
+        .form-grid .full {
+            grid-column: span 2;
+        }
+
+        label.form-label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 0.35rem;
+            margin-left: 0.25rem;
+        }
+
+        .form-section-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* ===== Fleet Table ===== */
+        .fleet-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .fleet-table th {
+            text-align: left;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #64748b;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .fleet-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .fleet-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .seat-bar {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .seat-cell {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background: var(--glass-border);
+        }
+
+        .seat-cell.booked {
+            background: var(--secondary);
+        }
+
+        .delete-btn {
+            background: none;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 0.3rem 0.7rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* ===== Network View ===== */
+        .company-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .company-card:hover {
+            border-color: rgba(245, 158, 11, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .company-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .company-card-name {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--primary);
+        }
+
+        .fleet-mini-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .fleet-mini-tag {
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.4rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        /* ===== Emergency Panel ===== */
+        .sos-broadcast-btn {
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            border: none;
+            border-radius: 1rem;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sos-broadcast-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.5);
+        }
+
+        .sos-broadcast-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sos-broadcast-btn:hover::after {
+            opacity: 1;
+        }
+
+        .alert-feed-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            border-radius: 0.8rem;
+            margin-bottom: 0.75rem;
+            animation: alertPulse 1s ease;
+            border-left: 4px solid var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .alert-feed-item.resolved {
+            border-left-color: var(--secondary);
+            background: rgba(16, 185, 129, 0.05);
+            opacity: 0.6;
+        }
+
+        @keyframes alertPulse {
+            0% {
+                transform: translateX(-10px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .resolve-btn {
+            background: none;
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: 0.2s;
+            margin-left: auto;
+        }
+
+        .resolve-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Pulse ring on SOS button */
+        .sos-pulse-wrapper {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        .sos-pulse-wrapper.pulsing::before,
+        .sos-pulse-wrapper.pulsing::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 1rem;
+            border: 2px solid var(--danger);
+            animation: ring 1.5s ease-out infinite;
+        }
+
+        .sos-pulse-wrapper.pulsing::after {
+            animation-delay: 0.75s;
+        }
+
+        /* ===== Stat cards ===== */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-card .big {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .tiny {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid .full {
+                grid-column: span 1;
+            }
+
+            .banner-stats {
+                display: none;
+            }
+
+            .company-banner {
+                flex-wrap: wrap;
+            }
+
+            .fleet-table {
+                font-size: 0.78rem;
+            }
+
+            .fleet-table th,
+            .fleet-table td {
+                padding: 0.6rem 0.5rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <nav>
         <div class="logo">MATATU HUB</div>
-        <div id="user-display"
-            style="font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 1rem;">
-            <span id="user-role-label">COMPANY: <span id="username"></span></span>
+        <div style="display:flex; align-items:center; gap:1rem; font-size:0.85rem; color:#94a3b8;">
+            <span>FLEET COMMAND: <span id="username" style="color:var(--primary); font-weight:700;"></span></span>
             <button class="nav-btn" onclick="logout()">Logout</button>
         </div>
     </nav>
 
     <header class="page-header">
-        <div class="slideshow-container" style="position: absolute; inset: 0; z-index: -1;">
-            <div class="slide active" style="background-image: url('assets/hero.png');"></div>
-            <div class="slide" style="background-image: url('assets/super_metro.png');"></div>
-            <div class="slide" style="background-image: url('assets/citi_hoppa.png');"></div>
-            <div class="slideshow-overlay" style="background: linear-gradient(rgba(15, 23, 42, 0.4), var(--bg));"></div>
+        <div class="slideshow-container" style="position:absolute; inset:0; z-index:-1;">
+            <div class="slide active" style="background-image:url('assets/hero.png');"></div>
+            <div class="slide" style="background-image:url('assets/super_metro.png');"></div>
+            <div class="slide" style="background-image:url('assets/citi_hoppa.png');"></div>
+            <div class="slideshow-overlay" style="background:linear-gradient(rgba(15,23,42,0.5), var(--bg));"></div>
         </div>
-        <div id="header-text" style="position: relative; z-index: 2;">
-            <h1 style="font-size: 2.5rem;">Fleet Command Center</h1>
-            <p style="color: #94a3b8;">Monitor operations and network health in real-time.</p>
+        <div style="position:relative; z-index:2;">
+            <h1 style="font-size:2.2rem;">⚡ Fleet Command Center</h1>
+            <p style="color:#94a3b8;">Manage your fleet, respond to emergencies, and monitor the network.</p>
         </div>
     </header>
 
     <main>
-        <div class="dashboard-grid">
-            <!-- SOS Feed -->
-            <div class="glass card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--danger);">🚨 Network SOS</h3>
-                    <button class="nav-btn" style="border-color: var(--danger); font-size: 0.7rem;"
-                        onclick="broadcastSOS()">I Need Help</button>
+        <!-- Company Profile Banner -->
+        <div class="company-banner" id="companyBanner">
+            <div class="company-avatar" id="companyAvatar">🏢</div>
+            <div>
+                <div class="company-name-edit">
+                    <span class="company-name-display" id="companyNameDisplay" onclick="startEditName()"
+                        title="Click to edit">—</span>
+                    <input class="company-name-input" id="companyNameInput" type="text"
+                        placeholder="Enter company name..." onblur="saveCompanyName()"
+                        onkeydown="if(event.key==='Enter') saveCompanyName()">
+                    <span class="edit-icon" onclick="startEditName()" title="Edit name">✏️</span>
                 </div>
-                <div id="company-sos-feed"></div>
+                <div style="font-size:0.75rem; color:#64748b; margin-top:0.25rem;">Fleet operator · Matatu Hub network
+                </div>
             </div>
-
-            <!-- Fleet Tracking -->
-            <div class="glass card" style="grid-column: span 2;">
-                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">📶 Live Fleet Telemetry</h3>
-                <div id="company-fleet-tracking"></div>
+            <div class="banner-stats">
+                <div class="banner-stat">
+                    <div class="val" id="stat-vehicles">0</div>
+                    <div class="lbl">Vehicles</div>
+                </div>
+                <div class="banner-stat">
+                    <div class="val" id="stat-booked" style="color:var(--secondary);">0</div>
+                    <div class="lbl">Seats Booked</div>
+                </div>
+                <div class="banner-stat">
+                    <div class="val" id="stat-sos" style="color:var(--danger);">0</div>
+                    <div class="lbl">Active SOS</div>
+                </div>
             </div>
+        </div>
 
-            <!-- Booked Seats -->
-            <div class="glass card" style="grid-column: span 3;">
-                <h3 style="margin-bottom: 1.5rem; color: var(--secondary);">🎫 Today's Bookings</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;"
-                    id="company-bookings"></div>
+        <!-- Tab Navigation -->
+        <div class="tab-nav" style="margin-bottom:2rem;">
+            <button class="tab-btn active" id="tab-fleet" onclick="switchTab('fleet')">🚐 My Fleet</button>
+            <button class="tab-btn" id="tab-register" onclick="switchTab('register')">➕ Register Vehicle</button>
+            <button class="tab-btn" id="tab-network" onclick="switchTab('network')">🌐 Network</button>
+            <button class="tab-btn" id="tab-emergency" onclick="switchTab('emergency')">🚨 Emergency</button>
+        </div>
+
+        <!-- ======= TAB: MY FLEET ======= -->
+        <div class="tab-panel active" id="panel-fleet">
+            <div class="stat-row" id="fleet-stats-row"></div>
+            <div class="glass card">
+                <h3 style="color:var(--primary); margin-bottom:1.5rem;">📋 Registered Vehicles</h3>
+                <div id="my-fleet-table-wrapper">
+                    <p style="color:#64748b; text-align:center; padding:3rem;">No vehicles registered yet. Go to <strong
+                            style="color:var(--primary);">Register Vehicle</strong> to add your first matatu.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======= TAB: REGISTER VEHICLE ======= -->
+        <div class="tab-panel" id="panel-register">
+            <div class="glass card" style="max-width:800px; margin:0 auto;">
+                <h3 style="color:var(--primary); margin-bottom:0.5rem;">➕ Register New Vehicle</h3>
+                <p style="color:#64748b; font-size:0.85rem; margin-bottom:1.5rem;">Add a matatu to your fleet — it will
+                    appear on the passenger network immediately.</p>
+
+                <div class="form-section-title">Vehicle Identity</div>
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Registration Plate *</label>
+                        <input type="text" id="reg-plate" placeholder="e.g. KCH 111A" maxlength="12">
+                    </div>
+                    <div>
+                        <label class="form-label">Vehicle Image</label>
+                        <select id="reg-img">
+                            <option value="assets/super_metro.png">Super Metro Style</option>
+                            <option value="assets/citi_hoppa.png">Citi Hoppa Style</option>
+                            <option value="assets/hero.png">Standard Matatu</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section-title">Route & Schedule</div>
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Route Name / Number *</label>
+                        <input type="text" id="reg-route" placeholder="e.g. 111 (Rongai - CBD)">
+                    </div>
+                    <div>
+                        <label class="form-label">County of Operation</label>
+                        <select id="reg-county">
+                            <!-- populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Departure Time *</label>
+                        <input type="time" id="reg-departure">
+                    </div>
+                    <div>
+                        <label class="form-label">ETA to Destination (minutes)</label>
+                        <input type="number" id="reg-eta" placeholder="e.g. 45" min="1" max="300">
+                    </div>
+                    <div class="full">
+                        <label class="form-label">Route Description</label>
+                        <input type="text" id="reg-desc" placeholder="e.g. Rongai Galleria → Kencom → City Hall">
+                    </div>
+                </div>
+
+                <div class="form-section-title">Capacity</div>
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Total Seats</label>
+                        <input type="number" id="reg-seats" value="14" min="8" max="30">
+                    </div>
+                    <div>
+                        <label class="form-label">Fare (KES)</label>
+                        <input type="number" id="reg-fare" placeholder="e.g. 100" min="10">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="registerVehicle()" style="margin-top:1rem;">
+                    🚐 Register Vehicle to Fleet
+                </button>
+            </div>
+        </div>
+
+        <!-- ======= TAB: NETWORK ======= -->
+        <div class="tab-panel" id="panel-network">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:2rem;">
+                <div>
+                    <h3 style="margin-bottom:1.5rem; color:var(--secondary);">🌐 Other Operators on Network</h3>
+                    <div id="network-companies-list"></div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom:1.5rem; color:var(--primary);">📡 All Active Fleet</h3>
+                    <div id="network-fleet-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======= TAB: EMERGENCY ======= -->
+        <div class="tab-panel" id="panel-emergency">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:2rem;">
+                <!-- Send SOS -->
+                <div>
+                    <h3 style="margin-bottom:1.5rem; color:var(--danger);">📣 Broadcast Emergency</h3>
+                    <div class="glass card">
+                        <label class="form-label" style="margin-bottom:0.5rem;">Emergency Type</label>
+                        <select id="sos-type" style="margin-bottom:1rem;">
+                            <option value="BREAKDOWN">🚗 Vehicle Breakdown</option>
+                            <option value="ACCIDENT">💥 Road Accident</option>
+                            <option value="CONGESTION">🚦 Station Overload</option>
+                            <option value="SECURITY">🛡️ Security Threat</option>
+                            <option value="MEDICAL">🏥 Medical Emergency</option>
+                        </select>
+                        <label class="form-label" style="margin-bottom:0.5rem;">Location / Details</label>
+                        <input type="text" id="sos-location" placeholder="e.g. Westlands Roundabout, KCH 111A"
+                            style="margin-bottom:1rem;">
+                        <div class="sos-pulse-wrapper" id="sosPulseWrapper">
+                            <button class="sos-broadcast-btn" onclick="broadcastSOS()">
+                                🚨 BROADCAST SOS TO NETWORK
+                            </button>
+                        </div>
+                        <p style="font-size:0.75rem; color:#64748b; text-align:center;">This alert will be visible to
+                            ALL operators on the Matatu Hub network.</p>
+                    </div>
+                </div>
+
+                <!-- Receive Alerts -->
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                        <h3 style="color:var(--danger);">📥 Active Alerts Feed</h3>
+                        <span id="alert-count-badge"
+                            style="background:var(--danger); padding:0.2rem 0.6rem; border-radius:2rem; font-size:0.7rem; font-weight:800;">0
+                            Active</span>
+                    </div>
+                    <div id="emergency-feed">
+                        <p
+                            style="color:#64748b; text-align:center; padding:2rem; border:1px dashed var(--glass-border); border-radius:1rem;">
+                            Network stable. No active alerts.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -63,80 +670,418 @@
     <div class="toast" id="mainToast"></div>
 
     <script>
+        // ============================
+        //  STATE
+        // ============================
+        let myFleet = JSON.parse(localStorage.getItem('mh_company_fleet') || '[]');
+        let emergencyAlerts = JSON.parse(localStorage.getItem('mh_alerts') || '[]');
+        let companyName = localStorage.getItem('mh_company_name') || '';
+
+        // Seed network with sample companies from data.js
+        const NETWORK_COMPANIES = [
+            { name: 'Super Metro', county: 'Nairobi', routes: ['111 (Rongai)', '111B (Madaraka)'], fleet: FLEET.filter(f => f.company === 'Super Metro') },
+            { name: 'Citi Hoppa', county: 'Nairobi', routes: ['46 (Kawangware)', '46B (Yaya)'], fleet: FLEET.filter(f => f.company === 'Citi Hoppa') },
+            { name: 'Coast Sacco', county: 'Mombasa', routes: ['Bamburi - CBD'], fleet: FLEET.filter(f => f.company === 'Coast Sacco') },
+            { name: 'Meru Shuttle', county: 'Meru', routes: ['Nchiru - Meru Town'], fleet: FLEET.filter(f => f.company === 'Meru Shuttle') },
+            { name: 'Kenya Mpya', county: 'Kiambu', routes: ['Thika - Nairobi'], fleet: FLEET.filter(f => f.company === 'Kenya Mpya') },
+        ];
+
+        // ============================
+        //  INIT
+        // ============================
         window.addEventListener('load', () => {
             const user = localStorage.getItem('matatu_user') || 'Admin';
             document.getElementById('username').innerText = user;
-            renderCompanyView();
+
+            // Populate county select
+            const countyEl = document.getElementById('reg-county');
+            COUNTIES.sort().forEach(c => {
+                const o = document.createElement('option');
+                o.value = c; o.innerText = c;
+                if (c === 'Nairobi') o.selected = true;
+                countyEl.appendChild(o);
+            });
+
+            // Default departure to now
+            const now = new Date();
+            document.getElementById('reg-departure').value =
+                String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            loadCompanyName();
+            renderMyFleet();
+            renderNetwork();
+            renderEmergencyFeed();
+            updateBannerStats();
         });
 
-        // Background Slideshow Logic
+        // Background Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
-        function rotateSlides() {
-            if (slides.length === 0) return;
+        setInterval(() => {
+            if (!slides.length) return;
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
+        }, 5000);
+
+        // ============================
+        //  COMPANY NAME
+        // ============================
+        function loadCompanyName() {
+            const display = document.getElementById('companyNameDisplay');
+            if (companyName) {
+                display.innerText = companyName;
+                document.getElementById('companyAvatar').innerText = companyName.charAt(0).toUpperCase();
+            } else {
+                display.innerText = 'Click ✏️ to set your company name';
+                display.style.color = '#64748b';
+                display.style.fontSize = '1rem';
+            }
         }
-        setInterval(rotateSlides, 5000);
 
-        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+        function startEditName() {
+            const display = document.getElementById('companyNameDisplay');
+            const input = document.getElementById('companyNameInput');
+            display.style.display = 'none';
+            input.style.display = 'block';
+            input.value = companyName;
+            input.focus();
+        }
 
-        function renderCompanyView() {
-            const user = localStorage.getItem('matatu_user') || 'Admin';
-            const sosList = document.getElementById('company-sos-feed');
-            sosList.innerHTML = STATIONS.filter(s => s.helpNeeded).map(s => `
-                <div class="item-row help-alert">
-                    <div>
-                        <strong>${s.company} SOS</strong>
-                        <p style="font-size:0.75rem; color:#94a3b8;">Station: ${s.name}</p>
-                    </div>
-                    <button class="nav-btn" style="border-color:var(--secondary); color:var(--secondary); font-size:0.7rem;" onclick="offerHelp('${s.name}')">Resolve</button>
+        function saveCompanyName() {
+            const input = document.getElementById('companyNameInput');
+            const val = input.value.trim();
+            if (val) {
+                companyName = val;
+                localStorage.setItem('mh_company_name', val);
+            }
+            input.style.display = 'none';
+            document.getElementById('companyNameDisplay').style.display = 'inline';
+            loadCompanyName();
+            renderNetwork(); // refresh network to show updated name
+        }
+
+        // ============================
+        //  TAB SWITCHING
+        // ============================
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+            if (tab === 'network') renderNetwork();
+            if (tab === 'emergency') renderEmergencyFeed();
+        }
+
+        // ============================
+        //  VEHICLE REGISTRATION
+        // ============================
+        function registerVehicle() {
+            const plate = document.getElementById('reg-plate').value.trim().toUpperCase();
+            const route = document.getElementById('reg-route').value.trim();
+            const county = document.getElementById('reg-county').value;
+            const departure = document.getElementById('reg-departure').value;
+            const eta = parseInt(document.getElementById('reg-eta').value) || 30;
+            const desc = document.getElementById('reg-desc').value.trim();
+            const seatCount = parseInt(document.getElementById('reg-seats').value) || 14;
+            const fare = document.getElementById('reg-fare').value.trim();
+            const img = document.getElementById('reg-img').value;
+
+            if (!plate) { showToast('⚠️ Registration plate is required.', 'var(--danger)'); return; }
+            if (!route) { showToast('⚠️ Route name is required.', 'var(--danger)'); return; }
+            if (!departure) { showToast('⚠️ Departure time is required.', 'var(--danger)'); return; }
+
+            if (myFleet.find(v => v.id === plate)) {
+                showToast('⚠️ This plate is already registered.', 'var(--danger)');
+                return;
+            }
+
+            const vehicle = {
+                id: plate,
+                route: route,
+                county: county,
+                departure: departure,
+                eta: eta,
+                desc: desc,
+                seats: Array(seatCount).fill(0),
+                fare: fare || 'N/A',
+                img: img,
+                company: companyName || localStorage.getItem('matatu_user') || 'My Company',
+                registered: new Date().toISOString()
+            };
+
+            myFleet.push(vehicle);
+            saveFleet();
+
+            // Also inject into the shared COUNTY_DATA fleet so passengers can see it
+            if (COUNTY_DATA[county]) {
+                COUNTY_DATA[county].fleet.push(vehicle);
+            }
+
+            showToast(`✅ ${plate} registered successfully on Route ${route}!`, 'var(--secondary)');
+
+            // Clear form
+            document.getElementById('reg-plate').value = '';
+            document.getElementById('reg-route').value = '';
+            document.getElementById('reg-eta').value = '';
+            document.getElementById('reg-desc').value = '';
+
+            renderMyFleet();
+            updateBannerStats();
+            switchTab('fleet');
+        }
+
+        function saveFleet() {
+            localStorage.setItem('mh_company_fleet', JSON.stringify(myFleet));
+        }
+
+        function deleteVehicle(plateId) {
+            if (!confirm(`Remove ${plateId} from your fleet?`)) return;
+            myFleet = myFleet.filter(v => v.id !== plateId);
+            saveFleet();
+            renderMyFleet();
+            updateBannerStats();
+            showToast(`🗑️ ${plateId} removed from fleet.`, '#64748b');
+        }
+
+        // ============================
+        //  MY FLEET RENDER
+        // ============================
+        function renderMyFleet() {
+            const wrapper = document.getElementById('my-fleet-table-wrapper');
+            const statsRow = document.getElementById('fleet-stats-row');
+
+            if (myFleet.length === 0) {
+                wrapper.innerHTML = `<p style="color:#64748b; text-align:center; padding:3rem;">No vehicles registered yet. Go to <strong style="color:var(--primary);">Register Vehicle</strong> to add your first matatu.</p>`;
+                statsRow.innerHTML = '';
+                return;
+            }
+
+            const totalSeats = myFleet.reduce((a, v) => a + v.seats.length, 0);
+            const bookedSeats = myFleet.reduce((a, v) => a + v.seats.filter(s => s === 1).length, 0);
+            const freeSeats = totalSeats - bookedSeats;
+            const occupancy = totalSeats > 0 ? Math.round((bookedSeats / totalSeats) * 100) : 0;
+
+            statsRow.innerHTML = `
+                <div class="stat-card"><div class="big" style="color:var(--primary);">${myFleet.length}</div><div class="tiny">Vehicles</div></div>
+                <div class="stat-card"><div class="big" style="color:var(--secondary);">${bookedSeats}</div><div class="tiny">Seats Booked</div></div>
+                <div class="stat-card"><div class="big">${freeSeats}</div><div class="tiny">Seats Free</div></div>
+                <div class="stat-card"><div class="big" style="color:${occupancy > 70 ? 'var(--danger)' : 'var(--secondary)'};">${occupancy}%</div><div class="tiny">Occupancy</div></div>
+            `;
+
+            wrapper.innerHTML = `
+                <div style="overflow-x:auto;">
+                    <table class="fleet-table">
+                        <thead>
+                            <tr>
+                                <th>Plate</th>
+                                <th>Route</th>
+                                <th>County</th>
+                                <th>Departure</th>
+                                <th>ETA</th>
+                                <th>Fare</th>
+                                <th>Booking</th>
+                                <th>Seats</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${myFleet.map(v => {
+                const booked = v.seats.filter(s => s === 1).length;
+                const total = v.seats.length;
+                const pct = Math.round((booked / total) * 100);
+                const seatCells = v.seats.slice(0, 14).map(s => `<div class="seat-cell${s ? ' booked' : ''}"></div>`).join('');
+                return `
+                                <tr>
+                                    <td><strong style="color:var(--primary);">${v.id}</strong></td>
+                                    <td style="font-size:0.8rem;">${v.route}</td>
+                                    <td style="font-size:0.8rem; color:#64748b;">${v.county}</td>
+                                    <td><span style="color:var(--secondary); font-weight:700;">${v.departure}</span></td>
+                                    <td style="color:#94a3b8; font-size:0.8rem;">${v.eta}m</td>
+                                    <td style="font-size:0.8rem;">KES ${v.fare}</td>
+                                    <td>
+                                        <span class="status-badge ${booked === total ? 'status-busy' : 'status-free'}">${booked}/${total}</span>
+                                        <div style="font-size:0.6rem; color:#64748b; margin-top:2px;">${pct}% full</div>
+                                    </td>
+                                    <td><div class="seat-bar">${seatCells}</div></td>
+                                    <td><button class="delete-btn" onclick="deleteVehicle('${v.id}')">Remove</button></td>
+                                </tr>`;
+            }).join('')}
+                        </tbody>
+                    </table>
                 </div>
-            `).join('') || '<p style="color:#64748b; padding:1rem; text-align:center;">Network Stable</p>';
+            `;
+        }
 
-            const trackList = document.getElementById('company-fleet-tracking');
-            const fleetToView = FLEET.filter(f => f.company.toLowerCase().includes(user.toLowerCase()) || user === 'Admin' || user === 'Fleet ID');
+        // ============================
+        //  NETWORK RENDER
+        // ============================
+        function renderNetwork() {
+            const companiesList = document.getElementById('network-companies-list');
+            const fleetList = document.getElementById('network-fleet-list');
 
-            trackList.innerHTML = fleetToView.map(f => `
-                <div class="item-row">
-                    <div style="display:flex; align-items:center; gap:1rem;">
-                        <img src="${f.img}" style="width:40px; height:40px; border-radius:0.5rem; object-fit:cover;">
+            // Build live company list (seed + user's own company if named)
+            let allCompanies = [...NETWORK_COMPANIES];
+            if (companyName) {
+                const existing = allCompanies.find(c => c.name === companyName);
+                if (!existing && myFleet.length > 0) {
+                    allCompanies.unshift({
+                        name: companyName + ' (You)',
+                        county: myFleet[0]?.county || 'Nairobi',
+                        routes: [...new Set(myFleet.map(v => v.route))],
+                        fleet: myFleet,
+                        isMe: true
+                    });
+                }
+            }
+
+            companiesList.innerHTML = allCompanies.map(co => `
+                <div class="company-card">
+                    <div class="company-card-header">
                         <div>
-                            <strong>${f.id}</strong>
-                            <p style="font-size:0.7rem; color:#94a3b8;">Route ${f.route} • Telemetry OK</p>
+                            <div class="company-card-name">${co.isMe ? '⭐ ' : '🏢 '}${co.name}</div>
+                            <div style="font-size:0.72rem; color:#64748b;">${co.county} County · ${co.fleet.length} vehicle${co.fleet.length !== 1 ? 's' : ''}</div>
+                        </div>
+                        <span class="status-badge status-free">Active</span>
+                    </div>
+                    <div style="font-size:0.75rem; color:#94a3b8;">Routes:</div>
+                    <div class="fleet-mini-list">
+                        ${co.routes.map(r => `<span class="fleet-mini-tag">🚌 ${r}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            // All active fleet across the network
+            const allFleet = [...FLEET, ...myFleet].slice(0, 20);
+            fleetList.innerHTML = allFleet.map(f => `
+                <div class="item-row" style="padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                    <div style="display:flex; align-items:center; gap:0.8rem;">
+                        <img src="${f.img}" style="width:36px; height:36px; border-radius:0.5rem; object-fit:cover; flex-shrink:0;">
+                        <div>
+                            <strong style="font-size:0.9rem;">${f.id}</strong>
+                            <p style="font-size:0.7rem; color:#64748b;">${f.company || companyName || '—'} · R-${f.route}</p>
                         </div>
                     </div>
                     <div style="text-align:right;">
                         <span class="status-badge status-free">Live</span>
-                        <div style="font-size:0.6rem; color:#64748b; margin-top:4px;">ETA: ${f.eta}m</div>
+                        <div style="font-size:0.6rem; color:#64748b; margin-top:2px;">ETA ${f.eta}m</div>
                     </div>
                 </div>
-            `).join('') || `<p style="color:#64748b; padding:3rem; text-align:center; border: 1px dashed var(--glass-border); border-radius:1rem;">No active telemetry for "${user}"</p>`;
-
-            const bookList = document.getElementById('company-bookings');
-            bookList.innerHTML = fleetToView.map(f => {
-                const bookedCount = f.seats.filter(s => s === 1).length;
-                return `
-                <div class="glass card" style="background: rgba(0,0,0,0.2);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-                        <strong>${f.id}</strong>
-                        <span style="color:var(--secondary); font-size:0.8rem;">${bookedCount}/14 Booked</span>
-                    </div>
-                    <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:4px;">
-                        ${f.seats.map(s => `<div style="height:10px; border-radius:3px; background:${s === 1 ? 'var(--secondary)' : 'var(--glass-border)'};"></div>`).join('')}
-                    </div>
-                </div>
-            `}).join('') || `<p style="color:#64748b; padding:2rem; text-align:center; grid-column: span 3;">No pending bookings found for your fleet.</p>`;
+            `).join('');
         }
 
+        // ============================
+        //  EMERGENCY SYSTEM
+        // ============================
         function broadcastSOS() {
-            showToast("🚨 SERVICE SOS BROADCASTED TO NETWORK", "var(--danger)");
+            const type = document.getElementById('sos-type').value;
+            const location = document.getElementById('sos-location').value.trim() || 'Location not specified';
+            const sender = companyName || localStorage.getItem('matatu_user') || 'Unknown Operator';
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' });
+
+            const alert = {
+                id: Date.now(),
+                type: type,
+                location: location,
+                sender: sender,
+                time: timeStr,
+                resolved: false
+            };
+
+            emergencyAlerts.unshift(alert);
+            localStorage.setItem('mh_alerts', JSON.stringify(emergencyAlerts));
+
+            // Pulse animation
+            const wrapper = document.getElementById('sosPulseWrapper');
+            wrapper.classList.add('pulsing');
+            setTimeout(() => wrapper.classList.remove('pulsing'), 3000);
+
+            showToast(`🚨 SOS BROADCAST: ${type} at ${location}`, 'var(--danger)');
+            document.getElementById('sos-location').value = '';
+            renderEmergencyFeed();
+            updateBannerStats();
         }
 
-        function offerHelp(station) {
-            showToast(`✅ ASSISTANCE SENT TO ${station.toUpperCase()}`, "var(--secondary)");
+        function resolveAlert(id) {
+            const alert = emergencyAlerts.find(a => a.id === id);
+            if (alert) {
+                alert.resolved = true;
+                localStorage.setItem('mh_alerts', JSON.stringify(emergencyAlerts));
+                renderEmergencyFeed();
+                updateBannerStats();
+                showToast('✅ Alert resolved and cleared from network.', 'var(--secondary)');
+            }
         }
+
+        function renderEmergencyFeed() {
+            const feed = document.getElementById('emergency-feed');
+            const badge = document.getElementById('alert-count-badge');
+
+            // Seed with existing station SOS alerts from data.js
+            const stationAlerts = STATIONS.filter(s => s.helpNeeded).map(s => ({
+                id: 'sta-' + s.name,
+                type: 'CONGESTION',
+                location: s.name,
+                sender: s.company || 'Network System',
+                time: 'Live',
+                resolved: false,
+                seeded: true
+            }));
+
+            const allAlerts = [...emergencyAlerts, ...stationAlerts];
+            const activeAlerts = allAlerts.filter(a => !a.resolved);
+            badge.innerText = activeAlerts.length + ' Active';
+            badge.style.background = activeAlerts.length > 0 ? 'var(--danger)' : '#64748b';
+
+            if (allAlerts.length === 0) {
+                feed.innerHTML = `<p style="color:#64748b; text-align:center; padding:2rem; border:1px dashed var(--glass-border); border-radius:1rem;">Network stable. No active alerts.</p>`;
+                return;
+            }
+
+            const typeIcons = { BREAKDOWN: '🚗', ACCIDENT: '💥', CONGESTION: '🚦', SECURITY: '🛡️', MEDICAL: '🏥' };
+
+            feed.innerHTML = allAlerts.map(a => `
+                <div class="alert-feed-item ${a.resolved ? 'resolved' : ''}">
+                    <span style="font-size:1.5rem;">${typeIcons[a.type] || '🚨'}</span>
+                    <div style="flex:1; min-width:0;">
+                        <strong style="color:${a.resolved ? 'var(--secondary)' : 'var(--danger)'}; font-size:0.85rem;">${a.type}</strong>
+                        <p style="font-size:0.75rem; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.location}</p>
+                        <p style="font-size:0.65rem; color:#64748b;">From: ${a.sender} · ${a.time}</p>
+                    </div>
+                    ${a.resolved
+                    ? `<span class="status-badge status-free">Resolved</span>`
+                    : !a.seeded
+                        ? `<button class="resolve-btn" onclick="resolveAlert(${a.id})">Resolve</button>`
+                        : `<span class="status-badge status-busy">Live</span>`
+                }
+                </div>
+            `).join('');
+        }
+
+        // ============================
+        //  BANNER STATS
+        // ============================
+        function updateBannerStats() {
+            const totalBooked = myFleet.reduce((a, v) => a + v.seats.filter(s => s === 1).length, 0);
+            const activeAlerts = emergencyAlerts.filter(a => !a.resolved).length;
+            document.getElementById('stat-vehicles').innerText = myFleet.length;
+            document.getElementById('stat-booked').innerText = totalBooked;
+            document.getElementById('stat-sos').innerText = activeAlerts;
+        }
+
+        // ============================
+        //  UTILITIES
+        // ============================
+        function showToast(msg, color) {
+            const toast = document.getElementById('mainToast');
+            toast.innerText = msg;
+            toast.style.background = color || 'var(--primary)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
     </script>
 </body>
 

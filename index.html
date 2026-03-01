@@ -105,6 +105,15 @@
             emailjs.init("YOUR_PUBLIC_KEY"); // Replace with real key
         })();
 
+        function showToast(msg, color) {
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.style.background = color || 'var(--primary)';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
         let selectedRole = 'passenger';
         let generatedCode = '';
 
@@ -155,9 +164,10 @@
                     setTimeout(() => {
                         document.getElementById('login-fields').style.display = 'none';
                         document.getElementById('verify-fields').style.display = 'block';
+                        document.getElementById('v-code').value = generatedCode; // Auto-fill code
                         btn.disabled = false;
                         btn.innerText = "Confirm Security Code";
-                        alert(`SECURITY ALERT: A code has been sent to ${user}. \nFor demo purposes, the code is: ${generatedCode}`);
+                        showToast(`🔐 Code auto-filled: ${generatedCode} — Click confirm to proceed.`, 'var(--primary)');
                     }, 1200);
                 } else {
                     // Step 2: Verify Code

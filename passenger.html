@@ -179,16 +179,23 @@
             const targetSelect = document.getElementById('targetCountySelect');
 
             COUNTIES.sort().forEach(c => {
+                // Build option for countySelect (current location)
                 const opt = document.createElement('option');
                 opt.value = c;
                 opt.innerText = c + " County";
                 if (c === "Nairobi") opt.selected = true;
-                select.appendChild(opt.cloneNode(true));
-                targetSelect.appendChild(opt);
+                select.appendChild(opt);
+
+                // Build a separate option for targetCountySelect (no pre-selection)
+                const targetOpt = document.createElement('option');
+                targetOpt.value = c;
+                targetOpt.innerText = c + " County";
+                targetSelect.appendChild(targetOpt);
             });
 
             renderPassengerView();
             populateStages();
+            initMap();
         });
 
         // Background Slideshow Logic
@@ -393,7 +400,6 @@
             }
         }
         setInterval(initMap, 10000);
-        setTimeout(initMap, 500);
     </script>
 </body>
 
