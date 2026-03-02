@@ -51,6 +51,7 @@ nav {
     font-weight: 800;
     background: linear-gradient(to right, var(--primary), #fbbf24);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.05rem;
 }
@@ -108,7 +109,8 @@ nav {
 }
 
 .slide.active {
-    opacity: 1.0; /* Increased from 0.8 for better visibility */
+    opacity: 1.0;
+    /* Increased from 0.8 for better visibility */
 }
 
 .slideshow-overlay {
@@ -301,7 +303,8 @@ select {
     text-align: center;
     padding: 50px 10%;
     margin-top: 70px;
-    background: transparent; /* Changed to show the slideshow background better */
+    background: transparent;
+    /* Changed to show the slideshow background better */
     position: relative;
     overflow: hidden;
 }
@@ -368,4 +371,154 @@ select {
     font-size: 1.2rem;
     color: #94a3b8;
     line-height: 1.8;
+}
+
+/* ============================================================
+   MOBILE TOUCH NAVIGATION — invisible improvements only
+   These do NOT change visual appearance on desktop.
+   ============================================================ */
+
+/* 1. Remove blue flash / grey tap highlight on mobile taps */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+/* 2. Eliminate the 300 ms click delay on all interactive elements */
+a,
+button,
+select,
+input,
+label,
+.tab-btn,
+.role-btn,
+.nav-btn,
+.btn-primary,
+.fleet-card,
+.item-row,
+.company-card,
+.feature-item,
+.resolve-btn,
+.delete-btn {
+    touch-action: manipulation;
+}
+
+/* 3. Minimum 44 × 44 px touch targets on mobile
+      (increases the invisible hit area without changing visual size) */
+@media (max-width: 768px) {
+
+    button,
+    .nav-btn,
+    .btn-primary,
+    .tab-btn,
+    .role-btn,
+    .sos-broadcast-btn,
+    .delete-btn,
+    .resolve-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* 4. Prevent iOS from zooming in when tapping inputs/selects */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+
+    /* 5. Prevent the auth card from being wider than the screen */
+    .auth-card {
+        padding: 2rem 1.5rem;
+        width: 92vw;
+    }
+
+    /* 6. Prevent wide fixed nav text from overflowing on very small screens */
+    nav {
+        gap: 0.5rem;
+    }
+
+    /* 7. Keep page-header text from being clipped */
+    .page-header {
+        height: auto;
+        min-height: 160px;
+        padding: 1.5rem 5% 1.2rem;
+    }
+
+    /* 8. Make main content not overflow horizontally */
+    main {
+        padding: 24px 4% 60px;
+        overflow-x: hidden;
+    }
+
+    /* 9. Tab nav: show scrollbar hint (momentum scroll) on mobile */
+    .tab-nav {
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+
+    .tab-btn {
+        scroll-snap-align: start;
+    }
+
+    /* 10. Fleet table: horizontal scroll with momentum */
+    .fleet-table,
+    [style*="overflow-x"] {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 11. Toast: move away from the bottom edge so it clears
+            the phone home-bar / gesture indicator */
+    .toast {
+        bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+        right: 1rem;
+        left: 1rem;
+        right: 1rem;
+        width: auto;
+    }
+
+    /* 12. Company banner: stack vertically on phones */
+    .company-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    /* 13. Hero section: reduce extreme padding */
+    .hero {
+        padding: 40px 6%;
+    }
+
+    /* 14. Features grid: single column on phones */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 60px 6%;
+    }
+
+    /* 15. Info section: reduce padding */
+    .info-section {
+        padding: 60px 6%;
+    }
+
+    /* 16. Dashboard grid: always 1 column on mobile */
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* span-2 / span-3 columns: reset on mobile */
+    [style*="grid-column: span"] {
+        grid-column: span 1 !important;
+    }
+}
+
+/* Safe-area insets for iPhone X+ notch/home-bar */
+@supports (padding: env(safe-area-inset-left)) {
+    nav {
+        padding-left: calc(5% + env(safe-area-inset-left));
+        padding-right: calc(5% + env(safe-area-inset-right));
+    }
+
+    main {
+        padding-bottom: calc(50px + env(safe-area-inset-bottom));
+    }
 }

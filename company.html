@@ -609,9 +609,24 @@
 
         <!-- ======= TAB: NETWORK ======= -->
         <div class="tab-panel" id="panel-network">
+            <!-- Network Summary Stats -->
+            <div class="stat-row" style="margin-bottom:1.5rem;" id="network-stat-row"></div>
+
+            <!-- County Filter -->
+            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+                <label
+                    style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#64748b; white-space:nowrap;">Filter
+                    by County</label>
+                <select id="network-county-filter" onchange="renderNetwork()"
+                    style="flex:1; min-width:160px; max-width:260px;">
+                    <option value="">All Counties</option>
+                </select>
+                <span id="network-filter-label" style="font-size:0.75rem; color:#64748b;"></span>
+            </div>
+
             <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:2rem;">
                 <div>
-                    <h3 style="margin-bottom:1.5rem; color:var(--secondary);">🌐 Other Operators on Network</h3>
+                    <h3 style="margin-bottom:1.5rem; color:var(--secondary);">🌐 Operators on Network</h3>
                     <div id="network-companies-list"></div>
                 </div>
                 <div>
@@ -679,11 +694,211 @@
 
         // Seed network with sample companies from data.js
         const NETWORK_COMPANIES = [
-            { name: 'Super Metro', county: 'Nairobi', routes: ['111 (Rongai)', '111B (Madaraka)'], fleet: FLEET.filter(f => f.company === 'Super Metro') },
-            { name: 'Citi Hoppa', county: 'Nairobi', routes: ['46 (Kawangware)', '46B (Yaya)'], fleet: FLEET.filter(f => f.company === 'Citi Hoppa') },
-            { name: 'Coast Sacco', county: 'Mombasa', routes: ['Bamburi - CBD'], fleet: FLEET.filter(f => f.company === 'Coast Sacco') },
-            { name: 'Meru Shuttle', county: 'Meru', routes: ['Nchiru - Meru Town'], fleet: FLEET.filter(f => f.company === 'Meru Shuttle') },
-            { name: 'Kenya Mpya', county: 'Kiambu', routes: ['Thika - Nairobi'], fleet: FLEET.filter(f => f.company === 'Kenya Mpya') },
+            /* ── Nairobi ── */
+            {
+                name: 'Super Metro', county: 'Nairobi',
+                routes: ['111 (Rongai)', '111B (Madaraka)', '58 (Karen)', '126 (Embakasi)'],
+                fleet: [
+                    { id: 'KCH 111A', route: '111 (Rongai)', company: 'Super Metro', eta: 4, img: 'assets/super_metro.png' },
+                    { id: 'KDA 222B', route: '111B (Madaraka)', company: 'Super Metro', eta: 9, img: 'assets/super_metro.png' },
+                    { id: 'KDB 333C', route: '58 (Karen)', company: 'Super Metro', eta: 14, img: 'assets/super_metro.png' },
+                    { id: 'KDC 444D', route: '126 (Embakasi)', company: 'Super Metro', eta: 7, img: 'assets/super_metro.png' },
+                ]
+            },
+            {
+                name: 'Citi Hoppa', county: 'Nairobi',
+                routes: ['46 (Kawangware)', '46B (Yaya)', '48 (Westlands)', '23 (Githurai)'],
+                fleet: [
+                    { id: 'KBB 462W', route: '46 (Kawangware)', company: 'Citi Hoppa', eta: 11, img: 'assets/citi_hoppa.png' },
+                    { id: 'KBC 463X', route: '46B (Yaya)', company: 'Citi Hoppa', eta: 17, img: 'assets/citi_hoppa.png' },
+                    { id: 'KBD 481Y', route: '48 (Westlands)', company: 'Citi Hoppa', eta: 8, img: 'assets/citi_hoppa.png' },
+                ]
+            },
+            {
+                name: 'Double M', county: 'Nairobi',
+                routes: ['44 (Westlands)', '44A (Parklands)', '45 (Highridge)'],
+                fleet: [
+                    { id: 'KDF 501M', route: '44 (Westlands)', company: 'Double M', eta: 6, img: 'assets/hero.png' },
+                    { id: 'KDG 502M', route: '44A (Parklands)', company: 'Double M', eta: 12, img: 'assets/hero.png' },
+                    { id: 'KDH 503M', route: '45 (Highridge)', company: 'Double M', eta: 21, img: 'assets/hero.png' },
+                    { id: 'KDI 504M', route: '44 (Westlands)', company: 'Double M', eta: 5, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'StarBus', county: 'Nairobi',
+                routes: ['33 (Ngong Rd)', '33B (Dagoretti)', '60 (South C)'],
+                fleet: [
+                    { id: 'KDJ 601S', route: '33 (Ngong Rd)', company: 'StarBus', eta: 9, img: 'assets/hero.png' },
+                    { id: 'KDK 602S', route: '33B (Dagoretti)', company: 'StarBus', eta: 16, img: 'assets/hero.png' },
+                    { id: 'KDL 603S', route: '60 (South C)', company: 'StarBus', eta: 4, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'Metro Trans', county: 'Nairobi',
+                routes: ['100 (Kayole)', '105 (Donholm)', '34 (Kikuyu)'],
+                fleet: [
+                    { id: 'KDM 701T', route: '100 (Kayole)', company: 'Metro Trans', eta: 13, img: 'assets/hero.png' },
+                    { id: 'KDN 702T', route: '105 (Donholm)', company: 'Metro Trans', eta: 8, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Kiambu ── */
+            {
+                name: 'Kenya Mpya', county: 'Kiambu',
+                routes: ['Thika - Nairobi', 'Thika - Ruiru', '237 (Juja)'],
+                fleet: [
+                    { id: 'KCH 001K', route: 'Thika - Nairobi', company: 'Kenya Mpya', eta: 5, img: 'assets/hero.png' },
+                    { id: 'KCH 002K', route: 'Thika - Ruiru', company: 'Kenya Mpya', eta: 10, img: 'assets/hero.png' },
+                    { id: 'KCH 003K', route: '237 (Juja)', company: 'Kenya Mpya', eta: 18, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'Kiri Liner', county: 'Kiambu',
+                routes: ['Kikuyu - CBD', 'Limuru - CBD'],
+                fleet: [
+                    { id: 'KDD 801L', route: 'Kikuyu - CBD', company: 'Kiri Liner', eta: 22, img: 'assets/hero.png' },
+                    { id: 'KDD 802L', route: 'Limuru - CBD', company: 'Kiri Liner', eta: 35, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Mombasa / Coast ── */
+            {
+                name: 'Coast Sacco', county: 'Mombasa',
+                routes: ['Bamburi - CBD', 'Nyali - CBD', 'Mtwapa - CBD'],
+                fleet: [
+                    { id: 'KCG 001M', route: 'Bamburi - CBD', company: 'Coast Sacco', eta: 8, img: 'assets/hero.png' },
+                    { id: 'KCG 002M', route: 'Nyali - CBD', company: 'Coast Sacco', eta: 12, img: 'assets/hero.png' },
+                    { id: 'KCG 003M', route: 'Mtwapa - CBD', company: 'Coast Sacco', eta: 20, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'Matatu 14', county: 'Mombasa',
+                routes: ['Likoni Ferry - CBD', 'Changamwe - CBD'],
+                fleet: [
+                    { id: 'KCH 141F', route: 'Likoni Ferry - CBD', company: 'Matatu 14', eta: 6, img: 'assets/hero.png' },
+                    { id: 'KCH 142F', route: 'Changamwe - CBD', company: 'Matatu 14', eta: 15, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'Coast Bus', county: 'Mombasa',
+                routes: ['Msa - Nairobi', 'Msa - Malindi', 'Msa - Lamu'],
+                fleet: [
+                    { id: 'KCB 201C', route: 'Msa - Nairobi', company: 'Coast Bus', eta: 240, img: 'assets/hero.png' },
+                    { id: 'KCB 202C', route: 'Msa - Malindi', company: 'Coast Bus', eta: 90, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Kisumu ── */
+            {
+                name: 'Lake Travels', county: 'Kisumu',
+                routes: ['Kondele - CBD', 'Milimani - CBD', 'Ahero - CBD'],
+                fleet: [
+                    { id: 'KCY 888K', route: 'Kondele - CBD', company: 'Lake Travels', eta: 5, img: 'assets/hero.png' },
+                    { id: 'KCY 889K', route: 'Milimani - CBD', company: 'Lake Travels', eta: 10, img: 'assets/hero.png' },
+                    { id: 'KCY 890K', route: 'Ahero - CBD', company: 'Lake Travels', eta: 30, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'Ena Coach', county: 'Kisumu',
+                routes: ['Kisumu - Nairobi', 'Kisumu - Eldoret'],
+                fleet: [
+                    { id: 'KCE 001E', route: 'Kisumu - Nairobi', company: 'Ena Coach', eta: 330, img: 'assets/hero.png' },
+                    { id: 'KCE 002E', route: 'Kisumu - Eldoret', company: 'Ena Coach', eta: 90, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Nakuru ── */
+            {
+                name: 'Mololine', county: 'Nakuru',
+                routes: ['Nakuru - Nairobi', 'Nakuru - Naivasha', 'Molo - Nakuru'],
+                fleet: [
+                    { id: 'KCR 002B', route: 'Nakuru - Nairobi', company: 'Mololine', eta: 45, img: 'assets/hero.png' },
+                    { id: 'KCR 003B', route: 'Nakuru - Naivasha', company: 'Mololine', eta: 55, img: 'assets/hero.png' },
+                    { id: 'KCR 004B', route: 'Molo - Nakuru', company: 'Mololine', eta: 30, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Meru ── */
+            {
+                name: 'Meru Shuttle', county: 'Meru',
+                routes: ['Nchiru - Meru Town', 'Meru - Nairobi', 'Meru - Isiolo'],
+                fleet: [
+                    { id: 'KCQ 101M', route: 'Nchiru - Meru Town', company: 'Meru Shuttle', eta: 7, img: 'assets/hero.png' },
+                    { id: 'KCQ 102M', route: 'Meru - Nairobi', company: 'Meru Shuttle', eta: 180, img: 'assets/hero.png' },
+                    { id: 'KCQ 103M', route: 'Meru - Isiolo', company: 'Meru Shuttle', eta: 50, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'MeSacco', county: 'Meru',
+                routes: ['Meru Town - Timau', 'Meru Town - Kianjai', 'Meru Town - Laare'],
+                fleet: [
+                    { id: 'KDA 401X', route: 'Meru Town - Timau', company: 'MeSacco', eta: 20, img: 'assets/hero.png' },
+                    { id: 'KDA 402X', route: 'Meru Town - Kianjai', company: 'MeSacco', eta: 35, img: 'assets/hero.png' },
+                    { id: 'KDA 403X', route: 'Meru Town - Laare', company: 'MeSacco', eta: 45, img: 'assets/hero.png' },
+                ]
+            },
+            {
+                name: 'Nyambene Sacco', county: 'Meru',
+                routes: ['Maua - Meru', 'Maua - Nairobi'],
+                fleet: [
+                    { id: 'KDA 777D', route: 'Maua - Meru', company: 'Nyambene Sacco', eta: 15, img: 'assets/hero.png' },
+                    { id: 'KDA 778D', route: 'Maua - Nairobi', company: 'Nyambene Sacco', eta: 210, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Eldoret / Uasin Gishu ── */
+            {
+                name: 'Eldoret Express', county: 'Uasin Gishu',
+                routes: ['Eldoret - Nairobi', 'Eldoret - Kisumu', 'Eldoret - Turbo'],
+                fleet: [
+                    { id: 'KDE 101U', route: 'Eldoret - Nairobi', company: 'Eldoret Express', eta: 270, img: 'assets/hero.png' },
+                    { id: 'KDE 102U', route: 'Eldoret - Kisumu', company: 'Eldoret Express', eta: 90, img: 'assets/hero.png' },
+                    { id: 'KDE 103U', route: 'Eldoret - Turbo', company: 'Eldoret Express', eta: 25, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Kisii ── */
+            {
+                name: 'Gusii Sacco', county: 'Kisii',
+                routes: ['Kisii - Nairobi', 'Kisii - Kisumu', 'Ogembo - Kisii'],
+                fleet: [
+                    { id: 'KDG 201G', route: 'Kisii - Nairobi', company: 'Gusii Sacco', eta: 300, img: 'assets/hero.png' },
+                    { id: 'KDG 202G', route: 'Kisii - Kisumu', company: 'Gusii Sacco', eta: 120, img: 'assets/hero.png' },
+                    { id: 'KDG 203G', route: 'Ogembo - Kisii', company: 'Gusii Sacco', eta: 20, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Kakamega / Western ── */
+            {
+                name: 'Kakamega Shuttle', county: 'Kakamega',
+                routes: ['Kakamega - Nairobi', 'Kakamega - Kisumu', 'Mumias - Kakamega'],
+                fleet: [
+                    { id: 'KDK 301W', route: 'Kakamega - Nairobi', company: 'Kakamega Shuttle', eta: 330, img: 'assets/hero.png' },
+                    { id: 'KDK 302W', route: 'Kakamega - Kisumu', company: 'Kakamega Shuttle', eta: 60, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Machakos ── */
+            {
+                name: 'Mks Sacco', county: 'Machakos',
+                routes: ['Machakos - Nairobi', 'Athi River - CBD', 'Tala - Nairobi'],
+                fleet: [
+                    { id: 'KBC 123M', route: 'Machakos - Nairobi', company: 'Mks Sacco', eta: 60, img: 'assets/hero.png' },
+                    { id: 'KBC 124M', route: 'Athi River - CBD', company: 'Mks Sacco', eta: 30, img: 'assets/hero.png' },
+                    { id: 'KBC 125M', route: 'Tala - Nairobi', company: 'Mks Sacco', eta: 75, img: 'assets/hero.png' },
+                ]
+            },
+
+            /* ── Nyeri / Central ── */
+            {
+                name: 'Nyeri Sacco', county: 'Nyeri',
+                routes: ['Nyeri - Nairobi', 'Karatina - Nairobi', 'Othaya - Nyeri'],
+                fleet: [
+                    { id: 'KDN 401N', route: 'Nyeri - Nairobi', company: 'Nyeri Sacco', eta: 150, img: 'assets/hero.png' },
+                    { id: 'KDN 402N', route: 'Karatina - Nairobi', company: 'Nyeri Sacco', eta: 120, img: 'assets/hero.png' },
+                    { id: 'KDN 403N', route: 'Othaya - Nyeri', company: 'Nyeri Sacco', eta: 25, img: 'assets/hero.png' },
+                ]
+            },
         ];
 
         // ============================
@@ -919,6 +1134,9 @@
         function renderNetwork() {
             const companiesList = document.getElementById('network-companies-list');
             const fleetList = document.getElementById('network-fleet-list');
+            const statRow = document.getElementById('network-stat-row');
+            const filterEl = document.getElementById('network-county-filter');
+            const filterLabel = document.getElementById('network-filter-label');
 
             // Build live company list (seed + user's own company if named)
             let allCompanies = [...NETWORK_COMPANIES];
@@ -935,7 +1153,38 @@
                 }
             }
 
-            companiesList.innerHTML = allCompanies.map(co => `
+            // Populate county filter (once)
+            const counties = [...new Set(allCompanies.map(c => c.county))].sort();
+            if (filterEl.options.length <= 1) {
+                counties.forEach(cn => {
+                    const o = document.createElement('option');
+                    o.value = cn; o.innerText = cn;
+                    filterEl.appendChild(o);
+                });
+            }
+
+            // Apply county filter
+            const selectedCounty = filterEl.value;
+            const visibleCompanies = selectedCounty
+                ? allCompanies.filter(c => c.county === selectedCounty)
+                : allCompanies;
+
+            // Network-wide summary stats
+            const totalVehicles = allCompanies.reduce((a, c) => a + c.fleet.length, 0);
+            const countiesCovered = new Set(allCompanies.map(c => c.county)).size;
+            const totalRoutes = allCompanies.reduce((a, c) => a + c.routes.length, 0);
+            statRow.innerHTML = `
+                <div class="stat-card"><div class="big" style="color:var(--secondary);">${allCompanies.length}</div><div class="tiny">Operators</div></div>
+                <div class="stat-card"><div class="big" style="color:var(--primary);">${totalVehicles}</div><div class="tiny">Vehicles Live</div></div>
+                <div class="stat-card"><div class="big">${countiesCovered}</div><div class="tiny">Counties Served</div></div>
+                <div class="stat-card"><div class="big" style="color:#a78bfa;">${totalRoutes}</div><div class="tiny">Active Routes</div></div>
+            `;
+
+            filterLabel.innerText = selectedCounty
+                ? `Showing ${visibleCompanies.length} operator${visibleCompanies.length !== 1 ? 's' : ''} in ${selectedCounty}`
+                : `Showing all ${allCompanies.length} operators`;
+
+            companiesList.innerHTML = visibleCompanies.map(co => `
                 <div class="company-card">
                     <div class="company-card-header">
                         <div>
@@ -951,15 +1200,18 @@
                 </div>
             `).join('');
 
-            // All active fleet across the network
-            const allFleet = [...FLEET, ...myFleet].slice(0, 20);
-            fleetList.innerHTML = allFleet.map(f => `
+            // All active fleet across filtered companies (max 30)
+            const netFleet = visibleCompanies.flatMap(c => c.fleet);
+            const allFleet = [...netFleet, ...myFleet].slice(0, 30);
+            fleetList.innerHTML = allFleet.length === 0
+                ? `<p style="color:#64748b; text-align:center; padding:2rem;">No vehicles for this filter.</p>`
+                : allFleet.map(f => `
                 <div class="item-row" style="padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.04);">
                     <div style="display:flex; align-items:center; gap:0.8rem;">
                         <img src="${f.img}" style="width:36px; height:36px; border-radius:0.5rem; object-fit:cover; flex-shrink:0;">
                         <div>
                             <strong style="font-size:0.9rem;">${f.id}</strong>
-                            <p style="font-size:0.7rem; color:#64748b;">${f.company || companyName || '—'} · R-${f.route}</p>
+                            <p style="font-size:0.7rem; color:#64748b;">${f.company || companyName || '—'} · ${f.route}</p>
                         </div>
                     </div>
                     <div style="text-align:right;">
